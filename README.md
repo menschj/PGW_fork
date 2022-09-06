@@ -1,5 +1,7 @@
 # Repository pgw-python
 
+#This is a fork from  https://github.com/Potopoles/PGW4ERA5 branch: draft_ch
+
 Software to modify ERA5 files to impose a large-scale climate change signal in ERA5 files 
 as described e.g. here https://iopscience.iop.org/article/10.1088/1748-9326/ab4438 or also
 here https://doi.org/10.1175/JCLI-D-18-0431.1
