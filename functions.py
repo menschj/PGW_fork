@@ -42,8 +42,6 @@ def dt64_to_dt(dt64):
     """
     timestamp = ((dt64 - np.datetime64('1970-01-01T00:00:00Z'))
                  / np.timedelta64(1, 's'))
-    ##print("hi")
-    #print(dt64)
     return(datetime.utcfromtimestamp(timestamp))
 
 
@@ -100,8 +98,7 @@ def integ_geopot(pa_hl, zgs, ta, hus, level1, p_ref):
     # determine level below reference pressure
     p_diff = pa_hl - p_ref
     p_diff = p_diff.where(p_diff >= 0, np.nan)
-    #print(p_diff[HLEV_ERA])
-    ind_ref_star = p_diff.argmin(dim=HLEV_ERA)
+    ind_ref_star = p_diff.argmin(dim=HLEV_ERA)        #? POTENTIAL ISSUE
     hl_ref_star = p_diff[HLEV_ERA].isel({HLEV_ERA:ind_ref_star})
     # get pressure and geopotential of that level
     p_ref_star = pa_hl.sel({HLEV_ERA:hl_ref_star})
@@ -144,7 +141,7 @@ def load_delta(delta_input_dir, var_name, era5_date_time,
     ## this is to catch error arising from cftime.DatetimeNoLeap time format
     ## (https://stackoverflow.com/questions/54462798/cftime-datetimenoleap-object-fails-to-convert-with-pandas-to-datetime)
     full_delta = full_delta.assign_coords(
-        time=full_delta.indexes['time']
+        time=full_delta.indexes['time']    #? FIX (removed .to_timedateindex())
     )
 
     ## remove leap year february 29th if in delta
@@ -161,7 +158,7 @@ def load_delta(delta_input_dir, var_name, era5_date_time,
         # replace delta year values with year of current target_date_time
         for i in range(len(full_delta.time)):
             full_delta.time.values[i] = dt64_to_dt(
-                        full_delta.time.values[i]).replace(
+                        full_delta.time.values[i]).replace(    #? FIX (added .values[])
                                 year=target_date_time.year)
 
         # find time index of climate delta before target time
@@ -181,7 +178,7 @@ def load_delta(delta_input_dir, var_name, era5_date_time,
             ind_before = -1
             before = full_delta.isel(time=ind_before)
             before.time.values = dt64_to_dt(
-                        before.time.values).replace(
+                        before.time.values).replace(    #? FIX (added .values[])
                                 year=target_date_time.year-1)
 
         # find time index of climate delta after target time
@@ -201,7 +198,7 @@ def load_delta(delta_input_dir, var_name, era5_date_time,
             ind_after = 0
             after = full_delta.isel(time=ind_after)
             after.time.values = dt64_to_dt(
-                        after.time.values).replace(
+                        after.time.values).replace(    #? FIX (added .values[])
                                 year=target_date_time.year+1)
 
         # if target time is exactly contained in climate delta
